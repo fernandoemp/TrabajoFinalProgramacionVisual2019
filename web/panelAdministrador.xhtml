@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./WEB-INF/templates/TemplateGeneral.xhtml">
+
+            <ui:define name="content">         
+
+                <h:form id="frmCuentas">  
+
+                    <p:panel header="Buscar" style="width: 600px; margin: 0 auto; margin-bottom: 15px;">
+                        <p:panelGrid columns="3" >
+                            <p:outputLabel value="Ingrese Email o parte de él para buscar"/>
+                            <p:inputText value="#{aBMUsuarioFormBean.emailBuscado}"/>
+                            <p:commandButton value="Buscar" actionListener="#{aBMUsuarioFormBean.buscarUsuarios()}" oncomplete="PF('dlgResultadoBusqueda').show()" update="frmBusqueda"/>
+                            <p:outputLabel value="Ingrese DNI para buscar"/>
+                            <p:inputText value="#{aBMUsuarioFormBean.dniBuscado}"/>
+                            <p:commandButton value="Buscar" actionListener="#{aBMUsuarioFormBean.buscarUsuariosPorDni()}" oncomplete="PF('dlgResultadoBusqueda').show()" update="frmBusqueda"/>
+                            <p:outputLabel value="Ingrese Rol o parte de él para buscar"/>
+                            <p:inputText value="#{aBMUsuarioFormBean.rolBuscado}"/>
+                            <p:commandButton value="Buscar" actionListener="#{aBMUsuarioFormBean.buscarUsuariosPorRol()}" oncomplete="PF('dlgResultadoBusqueda').show()" update="frmBusqueda"/>
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <h:panelGrid id="gridTable" style="margin-bottom: 15px;">
+                        <p:growl id="message" showDetail="true" />
+                        <p:dataTable id="dtbCuentas" value="#{aBMUsuarioFormBean.listaUsuarios}" var="user" >
+                            <p:column headerText="ID Cuenta">
+                                <p:outputLabel value="#{user.emailUsuario}" />     
+                            </p:column>
+                            <p:column headerText="Nombre de Usuario">
+                                <p:outputLabel value="#{user.nombreUsuario}" />     
+                            </p:column>
+                            <p:column headerText="Apellido de Usuario">
+                                <p:outputLabel value="#{user.apellidoUsuario}" />     
+                            </p:column>
+                            <p:column headerText="Estado de Cuenta">
+                                <p:outputLabel value="#{user.estadoCuenta}"/>  <br />
+                                <p:inplace label="Cambiar Estado de Cuenta" effectSpeed="fast" event="click">
+                                    <h:selectOneMenu value="#{user.estadoCuenta}">
+                                        <f:selectItem itemLabel="Habilitada" itemValue="Habilitada" />
+                                        <f:selectItem itemLabel="Inhabilitada" itemValue="Inhabilitada" />
+                                        <f:ajax event="change" render="dtbCuentas" execute="#{aBMUsuarioFormBean.modificarCuenta(user)}"/>
+                                    </h:selectOneMenu>
+                                </p:inplace>           
+                            </p:column>
+                            <p:column headerText="Rol del usuario">
+                                <p:outputLabel value="#{user.tipoCuenta.tipoRol}" />   <br />   
+                                <p:inplace label="Cambiar Rol" effectSpeed="fast" event="click" >
+                                    <h:selectOneMenu value="#{user.tipoCuenta}" 
+                                                     converter="omnifaces.SelectItemsConverter"> 
+                                        <f:selectItems value="#{aBMRolFormBean.listaRoles}"
+                                                       var="rol" itemLabel="#{rol.tipoRol} | #{rol.comentario}" 
+                                                       itemValue="#{rol}">
+                                        </f:selectItems>
+                                        <f:ajax event="change" render="dtbCuentas" execute="#{aBMUsuarioFormBean.modificarCuenta(user)}"/>
+                                    </h:selectOneMenu>
+                                </p:inplace>
+                            </p:column>
+                            <!--
+                            <p:column>
+                                <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-trash" update="frmCuentas"
+                                                 actionListener="#{aBMUsuarioFormBean.eliminarUsuario(user)}" >
+
+                                    <p:confirm header="Eliminar Usuario" message="Estas seguro de eliminar el usuario #{user.emailUsuario}?"  icon="pi pi-exclamation-triangle" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                </p:confirmDialog> 
+                            </p:column>
+                            -->
+                        </p:dataTable>
+                    </h:panelGrid>
+                </h:form>
+
+                <!-- FORMULARIO REGISTRO CUENTAS ESPECIALES-->
+                <h:form id="frmRegistro" >
+                    <p:growl id="msjRegistro" showDetail="true" severity="info"/>
+                    <p:growl id="msjValidacionesRegistro" showDetail="false" severity="error" life="10000"/>
+                    <p:panel header="Crear Cuenta con Rol Especifico" style="width: 450px;">
+                        <h:panelGrid columns="2" cellpadding="5" cellspacing="5">
+                            <p:outputLabel for="nombre" value="Nombre" />
+                            <p:inputText value="#{aBMUsuarioFormBean.usuario.nombreUsuario}" id="nombre" requiredMessage="Debe ingresar su nombre"
+                                         required="true" label="nombre" />
+                            <p:outputLabel for="nombre" value="Apellido" />
+                            <p:inputText value="#{aBMUsuarioFormBean.usuario.apellidoUsuario}" id="apellido" requiredMessage="Debe ingresar su apellido"
+                                         required="true" label="apellido" />
+                            <p:outputLabel for="dni" value="Documento Nacional de Identidad" />
+                            <p:inputNumber value="#{aBMUsuarioFormBean.usuario.dniUsuario}" id="dni" requiredMessage="Debe ingresar su D.N.I"
+                                           required="true" label="dni" decimalPlaces="0" >
+                                <f:validateLength minimum="7"  maximum="8"/>
+                                <f:validateLongRange minimum="1000000" />
+                                <f:converter converterId="javax.faces.Integer"/>
+                            </p:inputNumber>    
+                            <p:outputLabel for="edad" value="Edad" />
+                            <p:inputNumber value="#{aBMUsuarioFormBean.usuario.edadUsuario}" id="edad" requiredMessage="Debe ingresar su edad"
+                                           required="true" label="edad" decimalPlaces="0">
+                                <f:validateLongRange minimum="10" maximum="120"/>
+                                <f:converter converterId="javax.faces.Byte"/>
+                            </p:inputNumber>    
+                            <p:outputLabel for="email" value="Correo Electronico" />
+                            <p:inputText value="#{aBMUsuarioFormBean.usuario.emailUsuario}" id="email"
+                                         required="true" requiredMessage="Debe ingresar un correo electronico"
+                                         label="email" placeholder="ID de cuenta">
+                                <f:validator validatorId="emailValidator"/>
+                            </p:inputText>
+                            <p:outputLabel for="contraseña" value="Contraseña" />
+                            <p:password value="#{aBMUsuarioFormBean.usuario.passUsuario}" id="contraseña" feedback="true" inline="true"
+                                        maxlength="15" required="true" requiredMessage="Debe ingresar una contraseña"
+                                        match="verificacionContraseña" placeholder="Minimo 5 caracteres"
+                                        promptLabel="Ingrese una contraseña" 
+                                        weakLabel="Contraseña Debil" goodLabel="Contraseña Aceptable" strongLabel="Contraseña Fuerte">
+                                <f:validateLength minimum="5" />
+                                <f:validator validatorId="passwordValidator"/>
+                            </p:password>    
+                            <p:outputLabel for="verificacionContraseña" value="Repetir Contraseña" />
+                            <p:password id="verificacionContraseña" required="true" requiredMessage="Debe repetir la contraseña"/>
+
+                            <p:outputLabel value="Seleccionar Rol" />
+                            <h:selectOneMenu value="#{aBMUsuarioFormBean.usuario.tipoCuenta}"
+                                             converter="omnifaces.SelectItemsConverter">
+                                <f:selectItems value="#{aBMRolFormBean.listaRoles}"
+                                               var="rol" itemLabel="#{rol.tipoRol}" 
+                                               itemValue="#{rol}">
+                                </f:selectItems>
+                            </h:selectOneMenu>
+
+
+                            <!-- <p:button value="Volver al Inicio"  outcome="principal"/>-->
+                            <p:commandButton id="btnRegistro" value="Registrar"
+                                             actionListener="#{aBMUsuarioFormBean.crearUsuario()}" 
+                                             update="frmRegistro" />                 
+                        </h:panelGrid>
+                    </p:panel>
+                </h:form>
+
+                <h:form id="frmBusqueda">
+                    <p:dialog  widgetVar="dlgResultadoBusqueda">
+                        <p:panel>
+                            <p:panelGrid>
+                                <p:dataTable value="#{aBMUsuarioFormBean.resultadoBusqueda}" var="res">
+                                    <p:column headerText="Email">
+                                        <p:outputLabel value="#{res.emailUsuario}"/>
+                                    </p:column>
+                                    <p:column headerText="Nombre">
+                                        <p:outputLabel value="#{res.nombreUsuario}"/>
+                                    </p:column>
+                                    <p:column headerText="Apellido">
+                                        <p:outputLabel value="#{res.apellidoUsuario}"/>
+                                    </p:column>
+                                    <p:column headerText="DNI">
+                                        <p:outputLabel value="#{res.dniUsuario}"/>
+                                    </p:column>
+                                    <p:column headerText="Edad">
+                                        <p:outputLabel value="#{res.edadUsuario}"/>
+                                    </p:column>
+                                    <p:column headerText="Estado de Cuenta">
+                                        <p:outputLabel value="#{res.estadoCuenta}"/>
+                                    </p:column>
+                                    <p:column headerText="Tipo de Cuenta">
+                                        <p:outputLabel value="#{res.tipoCuenta.tipoRol}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panelGrid>         
+                        </p:panel>
+                    </p:dialog>
+                </h:form> 
+
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="aplicacion.modelo.dominio.Carrito" catalog="jugueteria" table="carritos"
+           optimistic-lock="version">
+    
+        <id name="codigoCarrito" type="integer">
+            <column name="car_codigo" length="10"/>
+            <generator class="identity"/>
+        </id>
+
+        <property name="fechaCarrito" type="date">
+            <column name="car_fecha_carrito" length="30" not-null="true"/>
+        </property>
+    
+        <many-to-one name="usuarioCliente" class="aplicacion.modelo.dominio.Usuario" fetch="join" cascade="all">
+            <column name="car_usuario_email" not-null="true"/>
+        </many-to-one>
+
+        <property name="estadoCarrito" type="string">
+            <column name="car_estado_carrito" length="20" not-null="true"/>
+        </property>
+        
+        <set name="listaProductosElegidos" table="productos_elegidos" fetch="select">
+            <key>
+                <column name="car_codigo" not-null="true"/>
+            </key>
+            <one-to-many class="aplicacion.modelo.dominio.ProductoElegido"/>
+        </set>
+    </class>
+</hibernate-mapping>
