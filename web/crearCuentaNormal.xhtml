@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./WEB-INF/templates/TemplateSinSeguridad.xhtml">
+
+            <ui:define name="content">
+                <div id="crearCuenta">
+
+
+                    <h:form id="frmRegistro">
+                        <p:growl id="msjRegistro" showDetail="true" severity="info"/>
+                        <p:growl id="msjValidacionesRegistro" showDetail="false" severity="error" life="10000"/>
+                        <p:panel header="Crear Cuenta Nueva" style="width:400px;">
+                            <h:panelGrid columns="2" cellpadding="5" cellspacing="5">
+                                <p:outputLabel for="nombre" value="Nombre" />
+                                <p:inputText value="#{aBMUsuarioFormBean.usuario.nombreUsuario}" id="nombre" requiredMessage="Debe ingresar su nombre"
+                                             required="true" label="nombre" />
+                                <p:outputLabel for="nombre" value="Apellido" />
+                                <p:inputText value="#{aBMUsuarioFormBean.usuario.apellidoUsuario}" id="apellido" requiredMessage="Debe ingresar su apellido"
+                                             required="true" label="apellido" />
+                                <p:outputLabel for="dni" value="Documento Nacional de Identidad" />
+                                <p:inputNumber value="#{aBMUsuarioFormBean.usuario.dniUsuario}" id="dni" requiredMessage="Debe ingresar su D.N.I"
+                                               required="true" label="dni" decimalPlaces="0" >
+                                    <f:validateLength minimum="7"  maximum="8"/>
+                                    <f:validateLongRange minimum="1000000" />
+                                    <f:converter converterId="javax.faces.Integer"/>
+                                </p:inputNumber>    
+                                <p:outputLabel for="edad" value="Edad" />
+                                <p:inputNumber value="#{aBMUsuarioFormBean.usuario.edadUsuario}" id="edad" requiredMessage="Debe ingresar su edad"
+                                               required="true" label="edad" decimalPlaces="0">
+                                    <f:validateLongRange minimum="10" maximum="120"/>
+                                    <f:converter converterId="javax.faces.Byte"/>
+                                </p:inputNumber>    
+                                <p:outputLabel for="email" value="Correo Electronico" />
+                                <p:inputText value="#{aBMUsuarioFormBean.usuario.emailUsuario}" id="email"
+                                             required="true" requiredMessage="Debe ingresar un correo electronico"
+                                             label="email" placeholder="ID de cuenta">
+                                    <f:validator validatorId="emailValidator"/>
+                                </p:inputText>
+                                <p:outputLabel for="contraseña" value="Contraseña" />
+                                <p:password value="#{aBMUsuarioFormBean.usuario.passUsuario}" id="contraseña" feedback="true" inline="true"
+                                            maxlength="15" required="true" requiredMessage="Debe ingresar una contraseña"
+                                            match="verificacionContraseña" placeholder="Minimo 5 caracteres"
+                                            promptLabel="Ingrese una contraseña" 
+                                            weakLabel="Contraseña Debil" goodLabel="Contraseña Aceptable" strongLabel="Contraseña Fuerte">
+                                    <f:validateLength minimum="5" />
+                                    <f:validator validatorId="passwordValidator"/>
+                                </p:password>    
+                                <p:outputLabel for="verificacionContraseña" value="Repetir Contraseña" />
+                                <p:password id="verificacionContraseña" required="true" requiredMessage="Debe repetir la contraseña"/>
+                                <p:button value="Volver al Inicio"  outcome="principal"/>
+                                <p:commandButton id="btnRegistro" value="Registrar"
+                                                 actionListener="#{aBMUsuarioFormBean.crearUsuario()}"
+                                                 update="frmRegistro"/>              
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:form>
+                </div>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
