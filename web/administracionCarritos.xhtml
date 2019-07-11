@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./WEB-INF/templates/TemplateGeneral.xhtml">
+
+            <ui:define name="content">
+                <h:form id="frmCarrito">
+                    <p:growl id="mensajes" showDetail="true"/>
+                    <p:panel header="Listado De Carritos" >
+                        <p:dataTable id="tblCarritos" var="carrito" value="#{carritoFormBean.carritos}" style="margin-bottom: 15px;">
+                            <p:column headerText="Codigo del carrito">
+                                <h:outputText value="#{carrito.codigoCarrito}"/>
+                            </p:column>
+
+                            <p:column headerText="Usuario Comprador: ">
+                                <h:outputText value="#{carrito.usuarioCliente.nombreUsuario}"/>
+                            </p:column>
+
+                            <p:column headerText="Fecha de creacion del carrito: ">
+                                <h:outputText value="#{carrito.fechaCarrito}"/>
+                            </p:column>
+
+                            <p:column headerText="Estado actual del carrito: ">
+                                <h:outputText value="#{carrito.estadoCarrito}"/><br/>
+                                <p:inplace label="Cambiar Estado de Cuenta" effectSpeed="fast" event="click">
+                                    <h:selectOneMenu value="#{carrito.estadoCarrito}"> 
+                                        <f:selectItem itemLabel="Pagado" itemValue="Pagado" />
+                                        <f:selectItem itemLabel="Pendiente" itemValue="Pendiente" />
+                                        <f:ajax event="change" render="frmCarrito" execute="#{carritoFormBean.modificarCarrito(carrito)}"/>
+                                    </h:selectOneMenu>
+                                </p:inplace>         
+                            </p:column>
+
+                        </p:dataTable>
+
+
+                        <p:panel id="pnlUltimoCarrito" header="Detalles del ultimo carrito creado" style="margin: 0 auto;">
+                            <p:dataTable id="tblDetalle" var="detalle" value="#{carritoFormBean.obtenerCarritos()}">
+                                <p:column headerText="Codigo del detalle">
+                                    <h:outputText value="#{detalle.codigoDetalle}"/>
+                                </p:column>
+
+                                <p:column headerText="Cantidad vendida">
+                                    <h:outputText value="#{detalle.cantidadVendida}"/>
+                                </p:column>
+
+                                <p:column headerText="Precio total">
+                                    <h:outputText value="#{detalle.precioTotal}"/>
+                                </p:column>
+
+                                <p:column headerText="Subtotal">
+                                    <h:outputText value="#{detalle.subtotal}"/>
+                                </p:column>
+
+                                <p:column headerText="Producto vendido">
+                                    <h:outputText value="#{detalle.productoVendido.nombreProducto}"/>
+                                </p:column>
+
+                                <p:column headerText="Usuario Comprador: ">
+                                    <h:outputText value="#{detalle.usuarioComprador.nombreUsuario}"/>
+                                </p:column>
+                            </p:dataTable>
+
+                        </p:panel> 
+
+
+
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
