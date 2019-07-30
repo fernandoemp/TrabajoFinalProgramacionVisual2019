@@ -47,10 +47,11 @@
                         </p:panel>
                     </p:dataGrid>
 
-                    <p:dialog header="Productos en carrito" minWidth="100" widgetVar="dlgReservar" draggable="false" modal="true" hideEffect="explode">
-                        <p:outputLabel value="Ingrese Cantidad: " id="txtCom"/>
-                        <p:inputText value="#{productoElegidoFormBean.cantidad}" style="margin-right:20px;"/>
-                        <p:commandButton id="btnConfirmar" value="Confirmar compra" actionListener="#{productoElegidoFormBean.agregarProductoElegido()}" update="msjConfirmar, pnlCarrito" oncomplete="PF('dlgReservar').hide()" style="margin-right:20px;"/>
+                    <p:dialog header="Ingresar Stock a Comprar"  widgetVar="dlgReservar" hideEffect="explode"  closable="false" draggable="false" modal="true" height="80" width="220">
+                        <p:spinner id="cantidadPedidaUsuario" value="#{productoElegidoFormBean.cantidad}" min="1" />
+                        <!--<p:inputText value="#{productoElegidoFormBean.cantidad}" style="margin-right:20px;"/>-->
+                        <p:commandButton id="btnConfirmar" value="Confirmar" actionListener="#{productoElegidoFormBean.agregarProductoElegido()}" update="msjConfirmar, pnlCarrito" oncomplete="PF('dlgReservar').hide()"/>
+                        <p:commandButton id="btnCancelar" value="Cancelar" oncomplete="PF('dlgReservar').hide()"/>
                     </p:dialog>
 
                     <!--Productos en carrito-->
@@ -78,7 +79,7 @@
                         
                         <div style="text-align: center;">
                             <p:commandButton value="Finalizar compra" update="GridCarrito" icon="ui-icon-cart" actionListener="#{productoElegidoFormBean.finalizarCarrito()}" action="#{loginFormBean.obtenerUsuarioLogueado()}">
-                            <p:confirm header="Confirmacion de compra" message="Estas seguro de confirmar la compra?"  icon="pi pi-exclamation-triangle" />
+                            <p:confirm header="Confirmacion de compra" message="Estas seguro de realizar la compra?"  icon="pi pi-exclamation-triangle" />
                         </p:commandButton>
                         </div>
                         

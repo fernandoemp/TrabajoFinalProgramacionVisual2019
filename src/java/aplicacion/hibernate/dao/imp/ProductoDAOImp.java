@@ -30,7 +30,6 @@ public class ProductoDAOImp implements Serializable, IProductoDAO{
 
     @Override
     public void modificarProducto(Producto producto) {
-        System.out.println("cantidad nueva de stock:"+producto.getStock());
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
         session.update(producto);

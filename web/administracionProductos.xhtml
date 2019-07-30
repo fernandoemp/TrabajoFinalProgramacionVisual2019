@@ -11,53 +11,56 @@
         <ui:composition template="./WEB-INF/templates/TemplateGeneral.xhtml">
 
             <ui:define name="content">
+                <!-- form que permite agregar nuevos productos, permitiendo especificar detalles del producto-->
                 <h:form id="frmProducto">
-                    <p:growl showDetail="false"/>
-
-                    <p:panel id="pnlbotones" header="Administracion de Productos" style="width: 400px; margin-bottom: 15px;">
+                    <p:growl showDetail="true" severity="info"/>
+                    <p:growl showDetail="false" severity="error"/>
+                    <p:panel id="pnlBotones" header="Administracion de Productos" style="width: 400px; margin-bottom: 15px;">
                         <h:panelGrid id="pnlgBotones" columns="2" cellpadding="3" cellspacing="10"> 
 
                             <p:outputLabel for="txtNombreProducto" value="Nombre: "/>
-                            <p:inputText id="txtNombreProducto" value="#{aBMProductoFormBean.producto.nombreProducto}" required="true" requiredMessage="Debe ingresar el nombre del producto"/>
+                            <p:inputText id="txtNombreProducto" value="#{aBMProductoFormBean.producto.nombreProducto}" required="true" requiredMessage="Debe ingresar el NOMBRE del producto"/>
 
                             <p:outputLabel value="Marca: " id="lblMarca"/>
-                            <p:inputText id="txtMarca" value="#{aBMProductoFormBean.producto.marca}" required="true" requiredMessage="Debe ingresar el nombre del producto"/>
+                            <p:inputText id="txtMarca" value="#{aBMProductoFormBean.producto.marca}" required="true" requiredMessage="Debe ingresar la MARCA del producto"/>
 
                             <p:outputLabel value="Dimension: " id="lblDimencion"/>
-                            <p:inputText id="txtDimencion" value="#{aBMProductoFormBean.producto.dimension}" required="true" requiredMessage="Debe ingresar el nombre del producto"/>
+                            <p:inputText id="txtDimencion" value="#{aBMProductoFormBean.producto.dimension}" required="true" requiredMessage="Debe ingresar la DIMENSION del producto"/>
 
                             <p:outputLabel value="Sector: " id="lblSector"/>
-                            <p:inputText id="txtSector" value="#{aBMProductoFormBean.producto.sector}" required="true" requiredMessage="Debe ingresar el sector al cual pertenece el producto"/>
+                            <p:inputText id="txtSector" value="#{aBMProductoFormBean.producto.sector}" required="true" requiredMessage="Debe ingresar el SECTOR al cual pertenece el producto"/>
 
                             <p:outputLabel value="Precio: " id="lblPrecio"/>
-                            <p:inputNumber id="nbrPrecio" value="#{aBMProductoFormBean.producto.precio}" required="true" decimalPlaces="2" minValue="1" requiredMessage=" Debe ingresar el Precio del producto"/>
+                            <p:inputNumber id="nbrPrecio" value="#{aBMProductoFormBean.producto.precio}" required="true" decimalPlaces="2" requiredMessage=" Debe ingresar el PRECIO del producto"/>
 
-                            <p:outputLabel value="Precio Oferta: " id="lblPrecioOferta"/>
-                            <p:inputNumber id="nbrPrecioOferta" value="#{aBMProductoFormBean.producto.precioOferta}" minValue="1" decimalPlaces="2" required="true" requiredMessage=" Debe ingresar el Precio en Oferta del producto"/>
+                            <p:outputLabel value="Precio Oferta (Opcional): " id="lblPrecioOferta"/>
+                            <p:inputNumber id="nbrPrecioOferta" value="#{aBMProductoFormBean.producto.precioOferta}" decimalPlaces="2"/>
 
                             <p:outputLabel value="Stock: " id="lblStock"/>
-                            <p:inputNumber id="stock" value="#{aBMProductoFormBean.producto.stock}" minValue="1" decimalPlaces="0" required="true" requiredMessage=" Debe ingresar el stock del producto"/>
+                            <p:inputNumber id="stock" value="#{aBMProductoFormBean.producto.stock}" decimalPlaces="0" required="true" requiredMessage=" Debe ingresar el STOCK del producto"/>
 
-                            <p:outputLabel value="Subir Imagen" id="lblImagen"/>
-                            <p:commandButton id="btnAgregarImagenProducto" value="Agregar Imagen" oncomplete="PF('dlgSubirImagen').show()"/>
+                            <p:outputLabel value="Seleccionar Imagen" id="lblImagen"/>
+                            <p:commandButton id="btnAgregarImagenProducto" oncomplete="PF('dlgSubirImagen').show()" icon="ui-icon-circle-arrow-n" style="height: 50px; width: 50px"/>
 
-                            <p:commandButton id="btnAgregarProducto" value="Agregar Producto" actionListener="#{aBMProductoFormBean.agregarProducto()}" update="frmEliminar"/>
+                            <p:commandButton id="btnAgregarProducto" value="Agregar Producto" actionListener="#{aBMProductoFormBean.agregarProducto()}" update="frmProducto,frmProductosDisponibles" style="margin-left: 100%" />
                         </h:panelGrid>
-                    </p:panel>
+                    </p:panel>                 
                 </h:form>
-                <h:form enctype="multipart/form-data">
-                    <p:growl showDetail="false"/>
+
+
+                <!--permite agregar las imagenes de los productos a agregar-->
+                <h:form id="frmUploadImage" enctype="multipart/form-data">
+                    <p:growl showDetail="true" severity="info"/>
+                    <p:growl showDetail="false" severity="error"/>
                     <p:dialog header="Seleccionar Imagen" minWidth="100" widgetVar="dlgSubirImagen" draggable="false" modal="true" hideEffect="explode">
                         <p:panel>
-                            <h:inputFile value="#{aBMProductoFormBean.image}" required="true" requiredMessage="Debe seleccionar una imagen del producto"/>
-                            <h:commandButton actionListener="#{aBMProductoFormBean.encode()}" value="Subir" onchange="" />
-                        </p:panel>
+                            <h:inputFile value="#{aBMProductoFormBean.image}" required="true" requiredMessage="Debe seleccionar la IMAGEN del producto"/>
+                            <h:commandButton actionListener="#{aBMProductoFormBean.encode()}" value="Subir" />
+                        </p:panel>    
                     </p:dialog>
-
                 </h:form>  
-
-                <h:form id="frmEliminar">
-
+                <!--permite mostrar y editar los productos disponibles-->
+                <h:form id="frmProductosDisponibles">
                     <p:dataTable id="dtbProducto" value="#{aBMProductoFormBean.listaProductos}" var="prod" resizableColumns="true" liveResize="true"
                                  rows="5" paginator="true" paginatorTemplate="{CurrentPageReport} {PageLinks}" rowsPerPageTemplate="5">
                         <p:column headerText="Codigo">
@@ -88,7 +91,7 @@
                         </p:column>
                         <p:column headerText="Precio">
                             <p:inplace id="inplPrecio" effectSpeed="fast" event="click" editor="true">
-                                <p:inputNumber value="#{prod.precio}"/>
+                                <p:inputNumber value="#{prod.precio}" />
                             </p:inplace>
                         </p:column>
                         <p:column headerText="Precio Oferta">
@@ -113,8 +116,8 @@
 
                         </p:column>
                         <p:column headerText="Opciones">
-                            <p:commandButton actionListener="#{aBMProductoFormBean.eliminarProducto(prod)}" update="frmEliminar" icon="ui-icon-trash" style="width: 50%; margin-right: 3px;"/>
-                            <p:commandButton actionListener="#{aBMProductoFormBean.modificarProducto(prod)}" update="frmEliminar" icon="ui-icon-pencil" style="width: 50%;"/>
+                            <p:commandButton actionListener="#{aBMProductoFormBean.eliminarProducto(prod)}" update="frmProductosDisponibles" icon="ui-icon-trash" style="width: 50%; margin-right: 3px;"/>
+                            <p:commandButton actionListener="#{aBMProductoFormBean.modificarProducto(prod)}" update="frmProductosDisponibles" icon="ui-icon-pencil" style="width: 50%;"/>
                         </p:column>
                     </p:dataTable>
 

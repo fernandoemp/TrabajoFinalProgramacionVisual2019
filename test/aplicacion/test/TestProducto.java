@@ -49,6 +49,5 @@ public class TestProducto {
         productoDAO.agregarProducto(nuevo2);
         
         
-        //productoDAO.eliminarProducto(nuevo);
     }
 }

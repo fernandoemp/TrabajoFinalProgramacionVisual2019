@@ -37,14 +37,13 @@ public class ABMProductoFormBean implements Serializable {
     private static String imagenCadena;
     private String sector;
     private List<String> sectores;
-    
-    public ABMProductoFormBean() {
 
+    public ABMProductoFormBean() {
         producto = new Producto();
         listaProductos = new ArrayList<>();
         productos = new ArrayList<>();
         sectores = new ArrayList<>();
-        
+
     }
 
     @PostConstruct
@@ -54,47 +53,46 @@ public class ABMProductoFormBean implements Serializable {
             getProductos().add(listaProductos.get(i).getNombreProducto());
         }
         Boolean existe = false;
-        for (int j = 0; j < listaProductos.size(); j++){
+        for (int j = 0; j < listaProductos.size(); j++) {
             existe = false;
-            if (sectores.size() > 0){
-                for (int k = 0; k < sectores.size(); k++){
-                     if (getSectores().get(k).equals(listaProductos.get(j).getSector())){
-                         existe = true;
-                     }
+            if (sectores.size() > 0) {
+                for (int k = 0; k < sectores.size(); k++) {
+                    if (getSectores().get(k).equals(listaProductos.get(j).getSector())) {
+                        existe = true;
+                    }
                 }
-                if (existe != true){
+                if (existe != true) {
                     getSectores().add(listaProductos.get(j).getSector());
-                }    
-            }else{
+                }
+            } else {
                 getSectores().add(listaProductos.get(j).getSector());
             }
-        }    
+        }
     }
 
     public void agregarProducto() {
-
-        producto.setImagen(imagenCadena);
-        imagenCadena = null;
-        if (producto.getImagen() != null) {
-
+        if (imagenCadena != null) {
+            producto.setImagen(imagenCadena);
+            imagenCadena = null;
             getProductoBean().agregarProducto(getProducto());
+            producto = null;
+            producto = new Producto();
             obtenerProductos();
         } else {
-            addMessageError("Debe seleccionar una imagen de producto", "");
+            addMessageError("Debe subir una imagen del producto", "");
         }
-
     }
-    
-    public void buscarPorSector(){
+
+    public void buscarPorSector() {
         obtenerProductos();
         for (int i = 0; i < listaProductos.size(); i++) {
-            if(!listaProductos.get(i).getSector().equals(sector)){
+            if (!listaProductos.get(i).getSector().equals(sector)) {
                 listaProductos.remove(i);
                 i--;
             }
         }
     }
-    
+
     public void modificarProducto(Producto producto) {
         getProductoBean().modificarProducto(producto);
         obtenerProductos();
@@ -108,24 +106,27 @@ public class ABMProductoFormBean implements Serializable {
     public void obtenerProductos() {
         listaProductos = getProductoBean().obtenerProductos();
     }
+
     /**
-     * encode(): Permite codificar una imagen subida desde la vista y convertirla en base64
-     * lo que permite almacenarla facilmente como un simple string, en donde el tipo de dato de mysql
-     * corresponde con un text(un string largo); luego con un simple decodificador en la vista mostramos
-     * directamente las imagenes
+     * encode(): Permite codificar una imagen subida desde la vista y
+     * convertirla en base64 lo que permite almacenarla facilmente como un
+     * simple string, en donde el tipo de dato en la base de datos corresponde a
+     * un tipo "text"(un string largo); luego con un simple decodificador en la
+     * vista mostramos directamente las imagenes
      */
     public void encode() {
 
-        byte[] imageAsByte = new byte[(int) getImage().getSize()];
         try {
             if (image.getSize() > 0) {
+                byte[] imageAsByte = new byte[(int) getImage().getSize()];
                 getImage().getInputStream().read(imageAsByte);
                 imagenCadena = new String(Base64.encodeBase64(imageAsByte));
+                addMessageInfo("Exito!", "Imagen subida satisfactoriamente");
+
             }
 
         } catch (IOException e) {
             System.out.println(e);
-
         }
     }
 
@@ -249,6 +250,5 @@ public class ABMProductoFormBean implements Serializable {
     public void setSectores(List<String> sectores) {
         this.sectores = sectores;
     }
-    
-    
+
 }

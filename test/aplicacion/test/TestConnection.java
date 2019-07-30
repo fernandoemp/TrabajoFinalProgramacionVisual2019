@@ -2,8 +2,8 @@ import java.sql.*;
 
 public class TestConnection
 {
-   static String login = "pv";
-   static String password = "pv2019";
+   static String login = "root";
+   static String password = "admin";
    static String url = "jdbc:mysql://localhost:3306/jugueteria?serverTimezone=UTC";
 
    public static void main(String[] args) throws Exception
@@ -12,7 +12,7 @@ public class TestConnection
 
       try
       {
-         Class.forName("com.mysql.jdbc.Driver").newInstance();
+         Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
 
          conn = DriverManager.getConnection(url,login,password);
 
