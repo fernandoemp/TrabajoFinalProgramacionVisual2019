@@ -40,10 +40,10 @@ public class ProductoElegidoFormBean implements Serializable {
     private ProductoElegido unProductoElegido;
     private List<ProductoElegido> listaProductoElegido;
     private Carrito carritoCreado;
-    private Integer cantidad;
+    private Integer cantidadUnidadesPedidas;
     private List<ProductoElegido> productosElegidos;
     private Producto productoPedido;
-    private Integer stockProductoPedido;
+   
 
     /**
      * Creates a new instance of DetalleProductoFormBean
@@ -63,22 +63,23 @@ public class ProductoElegidoFormBean implements Serializable {
 
     public void agregarProductoElegido() {
         Usuario usuarioLogueado = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioLogueado");
-        if (productoPedido.getStock() < cantidad) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "Debe seleccionar una cantidad menor o igual al stock disponible"));
+        if (productoPedido.getStock() < getCantidadUnidadesPedidas()) {
+            addMessageError("ERROR", "Debe seleccionar/ingresar una cantidad menor o igual al stock disponible");
         } else {
             carritoCreado.setUsuarioCliente(usuarioLogueado);
             carritoCreado.setFechaCarrito(new Date());
             carritoCreado.setEstadoCarrito("Pendiente");
 
-            unProductoElegido.setCantidadReservada(cantidad);
+            unProductoElegido.setCantidadReservada(getCantidadUnidadesPedidas());
             unProductoElegido.setCarrito(carritoCreado);
             unProductoElegido.setProductoElegido(productoPedido);
-            unProductoElegido.setPrecioTotal((double) productoPedido.getPrecio() * cantidad);
-            unProductoElegido.setSubtotal((double) productoPedido.getPrecio() * cantidad);
+            unProductoElegido.setPrecioTotal((double) productoPedido.getPrecio() * getCantidadUnidadesPedidas());
+            unProductoElegido.setSubtotal((double) productoPedido.getPrecio() * getCantidadUnidadesPedidas());
             productosElegidos.add(unProductoElegido);
             productoElegidoBean.agregarProductoElegido(unProductoElegido);
+            addMessageInfo(unProductoElegido.getProductoElegido().getNombreProducto(), "fue agregado al carrito!");
             unProductoElegido = new ProductoElegido();
+            
 
         }
     }
@@ -122,19 +123,29 @@ public class ProductoElegidoFormBean implements Serializable {
         return listaProductoElegido;
     }
 
+    //Mensajes
     /**
-     * @return the cantidad
+     * addMessageInfo
+     *
+     * @param summary permite mostrar el resumen del mensaje informativo
+     * @param detail permite mostrar otro mensaje mas detallado
      */
-    public Integer getCantidad() {
-        return cantidad;
+    public void addMessageInfo(String summary, String detail) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     /**
-     * @param cantidad the cantidad to set
+     * addMessageError
+     *
+     * @param summary permite mostrar el resumen del mensaje de error
+     * @param detail permite mostrar otro mensaje mas detallado
      */
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
+    public void addMessageError(String summary, String detail) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, detail);
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
+   
 
     /**
      * @return the unProductoElegido
@@ -218,8 +229,6 @@ public class ProductoElegidoFormBean implements Serializable {
      */
     public void setProductoPedido(Producto productoPedido) {
         this.productoPedido = productoPedido;
-        stockProductoPedido = productoPedido.getStock();
-//        System.out.println("test stock:" + stockProductoPedido);
     }
 
     /**
@@ -265,17 +274,17 @@ public class ProductoElegidoFormBean implements Serializable {
     }
 
     /**
-     * @return the stockProductoPedido
+     * @return the cantidadUnidadesPedidas
      */
-    public Integer getStockProductoPedido() {
-        return stockProductoPedido;
+    public Integer getCantidadUnidadesPedidas() {
+        return cantidadUnidadesPedidas;
     }
 
     /**
-     * @param stockProductoPedido the stockProductoPedido to set
+     * @param cantidadUnidadesPedidas the cantidadUnidadesPedidas to set
      */
-    public void setStockProductoPedido(Integer stockProductoPedido) {
-        this.stockProductoPedido = stockProductoPedido;
+    public void setCantidadUnidadesPedidas(Integer cantidadUnidadesPedidas) {
+        this.cantidadUnidadesPedidas = cantidadUnidadesPedidas;
     }
 
 }
