@@ -31,7 +31,7 @@ public class ABMProductoFormBean implements Serializable {
     @ManagedProperty(value = "#{productoBean}")
     private ProductoBean productoBean;
     private Producto producto;
-    private List<Producto> listaProductos;
+    static List<Producto> listaProductos;
     private List<String> productos;
     private Part image;
     private static String imagenCadena;
@@ -52,7 +52,7 @@ public class ABMProductoFormBean implements Serializable {
         for (int i = 0; i < listaProductos.size(); i++) {
             getProductos().add(listaProductos.get(i).getNombreProducto());
         }
-        Boolean existe = false;
+        Boolean existe;
         for (int j = 0; j < listaProductos.size(); j++) {
             existe = false;
             if (sectores.size() > 0) {

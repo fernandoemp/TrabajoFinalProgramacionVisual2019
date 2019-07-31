@@ -10,23 +10,26 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+
 /**
  *
  * @author Elias Acosta
  */
 @ManagedBean
 @ViewScoped
-public class CarritoFormBean implements Serializable{
+public class CarritoFormBean implements Serializable {
+
     private Carrito unCarrito;
-    @ManagedProperty(value="#{carritoBean}")
+    @ManagedProperty(value = "#{carritoBean}")
     private CarritoBean carritoBean;
-    @ManagedProperty(value="#{productoElegidoBean}")
+    @ManagedProperty(value = "#{productoElegidoBean}")
     private ProductoElegidoBean productoElegidoBean;
     private List<Carrito> carritos;
     private Integer codigoIngresado;
@@ -34,65 +37,66 @@ public class CarritoFormBean implements Serializable{
     private String fechaVencimiento;
     private List<ProductoElegido> productosElegidos;
     private Double precioFinal;
-    
+
     public CarritoFormBean() {
         carritos = new ArrayList<>();
         productosElegidos = new ArrayList<>();
     }
-    
+
     @PostConstruct
-    public void init(){
+    public void init() {
         unCarrito = new Carrito();
         setCarritoBuscado(new Carrito());
         obtenerCarritos();
     }
-    
+
     //Metodos CRUD de Carrito.
-    public void agregarCarrito(){
+    public void agregarCarrito() {
         carritoBean.agregarCarrito(unCarrito);
     }
-    
-    public void eliminarCarrito(){
+
+    public void eliminarCarrito() {
         getCarritoBean().eliminarCarrito(unCarrito);
     }
-    
-    public void modificarCarrito(Carrito carrito){
+
+    public void modificarCarrito(Carrito carrito) {
         getCarritoBean().modificarCarrito(carrito);
     }
-    
-    public void obtenerCarritos(){
-        carritos=getCarritoBean().obtenerCarritos();
+
+    public void obtenerCarritos() {
+        carritos = getCarritoBean().obtenerCarritos();
     }
 
-     public void verificarCarrito(){
-         setPrecioFinal(0.00);
-         SimpleDateFormat d = new SimpleDateFormat("dd-MM-yy");
+    public void verificarCarrito() {
+        setPrecioFinal(0.00);
+        SimpleDateFormat d = new SimpleDateFormat("dd-MM-yy");
         Date fecha = new Date();
         Boolean obtenido = false;
         FacesContext context = FacesContext.getCurrentInstance();
-        for(int i = 0; i < carritos.size() && obtenido != true; i++){
+        for (int i = 0; i < carritos.size() && obtenido != true; i++) {
             if (carritos.get(i).getCodigoCarrito().equals(getCodigoIngresado())) {
                 setCarritoBuscado(carritos.get(i));
-                fecha.setHours(fecha.getHours()+24);
+                fecha.setHours(fecha.getHours() + 24);
                 fechaVencimiento = DateFormat.getDateInstance().format(fecha);
                 productosElegidos.clear();
-                for (int j = 0; j < getProductoElegidoBean().obtenerProductoElegido().size(); j++){
-                    if (getProductoElegidoBean().obtenerProductoElegido().get(j).getCarrito().getCodigoCarrito() == codigoIngresado){  
-                    productosElegidos.add(getProductoElegidoBean().obtenerProductoElegido().get(j));
+                for (int j = 0; j < getProductoElegidoBean().obtenerProductoElegidos().size(); j++) {
+                    if (Objects.equals(getProductoElegidoBean().obtenerProductoElegidos().get(j).getCarrito().getCodigoCarrito(), codigoIngresado)) {
+                        productosElegidos.add(getProductoElegidoBean().obtenerProductoElegidos().get(j));
                     }
                 }
-              for (int k = 0; k < productosElegidos.size(); k++){
+                for (int k = 0; k < productosElegidos.size(); k++) {
                     precioFinal = precioFinal + productosElegidos.get(k).getPrecioTotal();
-              }
+                }
                 obtenido = true;
-            }   
             }
-            if (obtenido == false){
-                context.addMessage(null,
-                  new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
-                       "No existe una compra con el codigo especificado"));        
-            }
-    }   
+        }
+        if (obtenido == false) {
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR",
+                            "No existe una compra con el codigo especificado"));
+        }
+    }
+
     public Carrito getUnCarrito() {
         return unCarrito;
     }
@@ -200,5 +204,5 @@ public class CarritoFormBean implements Serializable{
     public void setPrecioFinal(Double precioFinal) {
         this.precioFinal = precioFinal;
     }
-    
+
 }

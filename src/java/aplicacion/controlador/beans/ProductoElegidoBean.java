@@ -34,7 +34,7 @@ public class ProductoElegidoBean implements Serializable{
         productoElegidoDAO.modificarProductoElegido(productoElegido);
     }
     
-    public List<ProductoElegido> obtenerProductoElegido(){
+    public List<ProductoElegido> obtenerProductoElegidos(){
         return productoElegidoDAO.obtenerProductosElegidos();
     }
 

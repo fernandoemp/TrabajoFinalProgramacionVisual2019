@@ -27,7 +27,6 @@ public class PasswordValidator implements Validator, Serializable {
         String pass = o.toString();
 
         for (int i = 0; i < pass.length(); i++) {
-            System.out.println(pass.charAt(i));
             if (pass.charAt(i) >= 'a' && pass.charAt(i) <= 'z') {
                 booleanMin = true;
 
@@ -41,7 +40,6 @@ public class PasswordValidator implements Validator, Serializable {
 
             }
         }
-        System.out.println("1" + booleanMay + "2" + booleanMin + "3" + booleanNum);
         if (booleanMay == false || booleanMin == false || booleanNum == false) {
             throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "La contraseña no es segura. Debera contener minimo 5 caracteres; 1 Mayuscula, 1 Minuscula y 1 numero", ""));

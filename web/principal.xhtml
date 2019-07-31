@@ -19,12 +19,12 @@
                             <f:selectItem itemLabel="Seleccione uno" itemValue=""/>
                             <f:selectItems value="#{aBMProductoFormBean.sectores}"/>
                         </p:selectOneMenu>
-                        <p:commandButton id="btnBusqueda" value="Buscar" actionListener="#{aBMProductoFormBean.buscarPorSector()}" update="GridCatalogo" style="margin-right: 10px;"/>
+                        <p:commandButton id="btnBusqueda" value="Buscar" actionListener="#{aBMProductoFormBean.buscarPorSector()}" update="gridCatalogo" style="margin-right: 10px;"/>
                         <p:commandButton id="btnRestablecer" value="Mostrar todos los productos" actionListener="#{aBMProductoFormBean.obtenerProductos()}" update="frmCatalogo"/>
                     </div>
-                    
+
                     <!--Permite mostrar los distintos productos en existencia-->
-                    <p:dataGrid id="GridCatalogo" var="prod" value="#{aBMProductoFormBean.listaProductos}" columns="5" layout="grid"
+                    <p:dataGrid id="gridCatalogo" var="prod" value="#{aBMProductoFormBean.listaProductos}" columns="5" layout="grid"
                                 rows="10" paginator="true"
                                 paginatorTemplate="{CurrentPageReport} {PageLinks}"
                                 rowsPerPageTemplate="10" style="margin-bottom: 10px;">
@@ -44,28 +44,32 @@
                             </p:panelGrid>
                             <p:commandButton actionListener="#{productoElegidoFormBean.setProductoPedido(prod)}" 
                                              value="Al Carrito" immediate="true" oncomplete="PF('dlgReservar').show()" title="View Detail"
-                                             update="GridCatalogo" icon="ui-icon-cart" style="width: 75%" rendered="#{controlDeSesionFormBean.verificarSesionUserConsumidor()}">
+                                             update="gridCatalogo" icon="ui-icon-cart" style="width: 75%" rendered="#{controlDeSesionFormBean.verificarSesionUserConsumidor()}">
                             </p:commandButton>
                         </p:panel>
                     </p:dataGrid>
-                    
+
                     <!--Permite al cliente indicar la cantidad de productos que comprara de un producto-->
-                    <p:dialog header="Ingresar Stock a Comprar"  widgetVar="dlgReservar" hideEffect="explode"  closable="false" draggable="false" modal="true" height="80" width="220">
-                        <p:spinner id="spnrPedidoUnidadesUsuario" value="#{productoElegidoFormBean.cantidadUnidadesPedidas}" min="1"/>
-                        <p:commandButton id="btnConfirmar" value="Confirmar" actionListener="#{productoElegidoFormBean.agregarProductoElegido()}" update="msjConfirmar, pnlCarrito" oncomplete="PF('dlgReservar').hide()"/>
-                        <p:commandButton id="btnCancelar" value="Cancelar" oncomplete="PF('dlgReservar').hide()"/>
+                    <p:dialog header="Ingresar Stock a Comprar"  widgetVar="dlgReservar" hideEffect="explode"  closable="false" draggable="false" modal="true" height="100" width="220">
+                        <p:panel>
+                            <p:spinner id="spnrPedidoUnidadesUsuario" value="#{productoElegidoFormBean.cantidadUnidadesPedidas}" min="1" />
+                            <p:commandButton id="btnConfirmar" value="Confirmar" actionListener="#{productoElegidoFormBean.agregarProductoElegido()}" update="pnlCarrito" oncomplete="PF('dlgReservar').hide()" resetValues="true"/>
+                            <p:commandButton id="btnCancelar" value="Cancelar" oncomplete="PF('dlgReservar').hide()"/>
+                        </p:panel>
                     </p:dialog>
 
                     <!--Muestra los productos en el carrito actual y permite eliminarlos-->
                     <p:panel id="pnlCarrito" header="Su carrito actual" style="width: 86%;" rendered="#{controlDeSesionFormBean.verificarSesionUserConsumidor()}">
-                        <p:dataGrid id="GridCarrito" var="prodEleg" value="#{productoElegidoFormBean.productosElegidos}" columns="5" layout="grid"
+                        <p:dataGrid id="gridCarrito" var="prodEleg" value="#{productoElegidoFormBean.productosElegidos}" columns="5" layout="grid"
                                     rows="10" paginator="true"
                                     paginatorTemplate="{CurrentPageReport} {PageLinks}"
-                                    rowsPerPageTemplate="10">
+                                    rowsPerPageTemplate="10" >
 
                             <p:panel header="#{prodEleg.productoElegido.nombreProducto}" style="text-align:center">
                                 <img src='data:image/png;base64,#{prodEleg.productoElegido.imagen}' height="130" width="130"/>
-                                <p:panelGrid columns="2" columnClasses="label,value">
+                                <p:panelGrid columns="2" columnClasses="label,value"  styleClass="ui-noborder">
+                                    <h:outputText value="Nombre del Producto"/>                                
+                                    <h:outputText value="#{prod.nombreProducto}"/>
                                     <h:outputText value="Marca"/>                                
                                     <h:outputText value="#{prodEleg.productoElegido.marca}"/>
                                     <h:outputText value="Precio Total"/>
@@ -74,27 +78,30 @@
                                     <h:outputText value="#{prodEleg.cantidadReservada} unidades"/>
                                 </p:panelGrid>
                                 <p:commandButton value="Eliminar Producto" immediate="true" actionListener="#{productoElegidoFormBean.eliminarProductoElegido(prodEleg)}"
-                                                 update="GridCarrito"/>                                                 
+                                                 update="gridCarrito"/>                                                 
                             </p:panel>
                         </p:dataGrid>
                         <p:spacer/>
-                        
-                        <div style="text-align: center;">
-                            <p:commandButton value="Finalizar compra" update="GridCarrito" icon="ui-icon-cart" actionListener="#{productoElegidoFormBean.finalizarCarrito()}" action="#{loginFormBean.obtenerUsuarioLogueado()}">
-                            <p:confirm header="Confirmacion de compra" message="Estas seguro de realizar la compra?"  icon="pi pi-exclamation-triangle" />
-                        </p:commandButton>
+
+                        <div style="text-align: center">
+                            <p:commandButton value="Finalizar Compra" update="gridCarrito,gridCatalogo" icon="ui-icon-cart" 
+                                             actionListener="#{productoElegidoFormBean.finalizarCarrito()}" 
+                                             action="#{loginFormBean.obtenerUsuarioLogueado()}">
+                                <p:confirm header="Confirmacion de compra" message="Estas seguro de realizar la compra?"  icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+
                         </div>
-                        
+
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onclick="PF('dlgMensaje').show()" update="frmCatalogo" ajax="false"/>
-                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                        </p:confirmDialog> 
-                       
-                        <p:dialog id="dlgMensaje" header="Gracias por su compra" widgetVar="dlgMensaje" resizable="false" modal="true"  >
-                            <p:outputLabel value="Para completar su compra, debe ingresar el codigo que recibio en su email (#{loginFormBean.emailLogin}) en la ventana 'Ver Factura de Compra'"/>
-                        </p:dialog>
+                            <p:commandButton value="Si" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onclick="PF('dlgMensaje').show()" update="frmCatalogo" />
+                            <p:commandButton value="No"  styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
                     </p:panel>
                 </h:form>
+
+                <p:dialog id="dlgMensaje" header="Gracias por su compra" widgetVar="dlgMensaje" resizable="false" modal="true"  >
+                    <p:outputLabel value="Para completar su compra, debe ingresar el codigo que recibio en su email (#{loginFormBean.emailLogin}) en la ventana 'Ver Factura de Compra'"/>
+                </p:dialog>-
             </ui:define>
 
         </ui:composition>

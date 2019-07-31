@@ -34,8 +34,7 @@ public class MailBean implements Serializable{
     }
     
     public void enviarMail(Integer codigo) {
-        Usuario usuarioLogueado = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioLogueado");
-        System.out.println(usuarioLogueado);
+        Usuario usuarioLogueado = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioLogueado");        
         try{
             Properties props = new Properties();
             props.setProperty("mail.smtp.host", "smtp.gmail.com");
